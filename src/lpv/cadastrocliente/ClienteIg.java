@@ -283,7 +283,7 @@ public class ClienteIg extends JFrame {
 				
 				visualizarCliente.preencherFormulario(nome, email, telefone, cpf, dataNascimento);
 				
-				visualizarCliente.configurarVisualizacao();
+				visualizarCliente.configurarVisualizacao(ClienteIg.this);
 				
 				visualizarCliente.setVisible(true);
 				

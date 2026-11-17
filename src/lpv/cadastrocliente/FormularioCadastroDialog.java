@@ -178,7 +178,7 @@ public class FormularioCadastroDialog extends JDialog {
 						String email = textEmail.getText().strip();
 						String telefone = textTelefone.getText().strip();
 						String cpf = textCpf.getText().strip();
-						String dataNascimento = textCpf.getText().strip();
+						String dataNascimento = textDataNascimento.getText().strip();
 
 						//Envia os dados a janela principal.
 						proprietario.recebeDadosForm(nome, email, telefone, cpf, dataNascimento);
@@ -207,6 +207,9 @@ public class FormularioCadastroDialog extends JDialog {
 				//Ação do cancelar.
 				cancelarButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						
+						//Atualiza o status antes de fechar a janela.
+						proprietario.atualizaStatus("Pronto");
 						
 						//Fecha a janela e libera os recursos gráficos.
 						dispose();
@@ -243,10 +246,11 @@ public class FormularioCadastroDialog extends JDialog {
 	/**
 	 *
 	 * Configura o formulário para o modo visualização. 
+	 * Recebe o proprietario para fazer a atualização de status.
 	 * 
 	 */
 	
-	public void configurarVisualizacao() {
+	public void configurarVisualizacao(ClienteIg proprietario) {
 		
 		setTitle("Visualizar cliente");
 		
@@ -261,6 +265,8 @@ public class FormularioCadastroDialog extends JDialog {
 		textTelefone.setEditable(false);
 		textCpf.setEditable(false);
 		textDataNascimento.setEditable(false);
+		
+		proprietario.atualizaStatus("Visualizando cliente");
 		
 	}
 	

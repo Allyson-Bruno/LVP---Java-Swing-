@@ -5,23 +5,27 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
+import java.awt.event.KeyEvent;
 
 public class ClienteIg extends JFrame {
 
@@ -43,6 +47,10 @@ public class ClienteIg extends JFrame {
 	private JMenu menuExibir;
 	private JCheckBoxMenuItem checkItemBarraStatus;
 	private JLabel lblBarraStatus;
+	private JMenu menuFonte;
+	private JRadioButtonMenuItem radioItemPequeno;
+	private JRadioButtonMenuItem radioItemGrande;
+	private JRadioButtonMenuItem radioItemMedio;
 
 	/**
 	 * Launch the application.
@@ -64,6 +72,11 @@ public class ClienteIg extends JFrame {
 	 * Create the frame.
 	 */
 	public ClienteIg() {
+
+		//Configurações básicas da janela principal.
+		setResizable(false);
+		setSize(765, 565);
+		setLocationRelativeTo(null);
 
 		setTitle("Cadastro de clientes");
 		
@@ -88,10 +101,6 @@ public class ClienteIg extends JFrame {
 			}
 		});
 		
-		setSize(452, 380);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		
 		//Área do Menu.
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -103,9 +112,15 @@ public class ClienteIg extends JFrame {
 		//Em suma o actionListener do botão "Novo Cliente" será o desse.
 		itemMenuNovoCliente = new JMenuItem("Novo cliente");
 		
+		//Atalho adicionado.
+		itemMenuNovoCliente.setMnemonic(KeyEvent.VK_N);
+		
 		menuArquivo.add(itemMenuNovoCliente);
 		
 		itemMenuSair = new JMenuItem("Sair");
+		
+		//Segundo atalho.
+		itemMenuSair.setMnemonic(KeyEvent.VK_S);
 		menuArquivo.add(itemMenuSair);
 		
 		menuExibir = new JMenu("Exibir");
@@ -116,6 +131,48 @@ public class ClienteIg extends JFrame {
 		checkItemBarraStatus = new JCheckBoxMenuItem("Exibir barra de status", true);
 		menuExibir.add(checkItemBarraStatus);
 		
+		menuFonte = new JMenu("Fonte");
+		menuBar.add(menuFonte);
+		
+		radioItemPequeno = new JRadioButtonMenuItem("Pequeno");
+		menuFonte.add(radioItemPequeno);
+		
+		//Definindo como opção padrão.
+		radioItemMedio = new JRadioButtonMenuItem("Medio", true);
+		menuFonte.add(radioItemMedio);
+		
+		radioItemGrande = new JRadioButtonMenuItem("Grande");
+		menuFonte.add(radioItemGrande);
+
+		//Ações dos botões que alteram a fonte.
+		radioItemPequeno.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.setFont(new Font("Segoe UI", Font.BOLD, 12));
+			}
+		});
+		
+		//Alteração se da sob o tamanho da fonte na tabela dos clientes.
+				
+		radioItemMedio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.setFont(new Font("Segoe UI", Font.BOLD, 16));
+			}
+		});
+		
+		
+		radioItemGrande.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.setFont(new Font("Segoe UI", Font.BOLD, 20));
+			}
+		});
+		
+		//Importante adicionar eles no grupo para o funcionamento.
+		ButtonGroup buttonGroup = new ButtonGroup();
+
+		buttonGroup.add(radioItemPequeno);
+		buttonGroup.add(radioItemMedio);
+		buttonGroup.add(radioItemGrande);
+
 		//Ação dos itens do Menu.
 		itemMenuNovoCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -140,8 +197,7 @@ public class ClienteIg extends JFrame {
 		 * 
 		 * Quando a opção estiver marcada, a barra de status deverá ser exibida.
 		 * Quando a opção estiver desmarcada, a barra de status deverá ser ocultada.
-		 * 
-		 * 
+
 		 * Por fim:
 		 * A mensagem deverá ser atualizada conforme as operações pelo usuário.
 		 * 
@@ -158,8 +214,6 @@ public class ClienteIg extends JFrame {
 				
 			}
 		});
-		
-		
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -194,6 +248,105 @@ public class ClienteIg extends JFrame {
 		//Já aclopa a tabela.
 		JScrollPane scrollPane = new JScrollPane(table);
 		
+		//O JPopuMenu deve ser associado a tabela.
+		//Se não existe tabela não tem popu, ou deveria aparecer mesmo sem?
+		JPopupMenu jPopupVisualizarCliente = new JPopupMenu();
+		
+		//O item de visualizar deve abrir a JDialog com as informações do cliente.
+		JMenuItem visualizarClienteItem = new JMenuItem("Visualizar");
+		
+		//Deverá solicitar a confirmação do usuário para a remoção do cliente.
+		JMenuItem excluirClienteItem = new JMenuItem("Excluir");
+		
+		//Adicionando os itens ao JPopupMenu.
+		jPopupVisualizarCliente.add(visualizarClienteItem);
+		jPopupVisualizarCliente.add(excluirClienteItem);
+
+		//Ações dos itens. Popup
+		visualizarClienteItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int linha = table.getSelectedRow();
+				
+				if (!temLinhaSelecionada(linha)) {
+					JOptionPane.showMessageDialog(
+							ClienteIg.this, 
+							"Selecione uma linha", 
+							getTitle(), 
+							JOptionPane.INFORMATION_MESSAGE);
+					
+					//Se não encerrar o método abaixo tenta encontar o cliente com -1.
+					return;
+				}
+			
+				//Sendo válido converte a linha e exibe os dados.
+				int linhaModelo = table.convertRowIndexToModel(linha);
+				
+				String nome = (String) modeloTabela.getValueAt(linhaModelo, 0);
+				String email = (String) modeloTabela.getValueAt(linhaModelo, 1);
+				String telefone = (String) modeloTabela.getValueAt(linhaModelo, 2);
+				String cpf = (String) modeloTabela.getValueAt(linhaModelo, 3);
+				String dataNascimento = (String) modeloTabela.getValueAt(linhaModelo, 4);
+				
+				FormularioCadastroDialog formVisualizarCliente = 
+						new FormularioCadastroDialog(ClienteIg.this);
+			
+				formVisualizarCliente.preencherFormulario(nome, email, telefone, cpf, dataNascimento);
+				
+				formVisualizarCliente.configurarVisualizacao(ClienteIg.this);
+				
+				atualizaStatus("Cliente selecionado: " + nome);
+				
+				formVisualizarCliente.setVisible(true);
+			}
+		});
+		
+		//Ação do botão de excluir do Popup.
+		excluirClienteItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int linhaSelecionada = table.getSelectedRow();
+				
+				if (!temLinhaSelecionada(linhaSelecionada)) {
+					
+					JOptionPane.showMessageDialog(
+							ClienteIg.this, 
+							"Selecione pelo menos uma linha.", 
+							getTitle(), 
+							JOptionPane.INFORMATION_MESSAGE);
+					
+					return;
+				}
+				
+				//Seguindo a lógica já aplicada: pergunta se deseja excluir.
+				int resposta = JOptionPane.showConfirmDialog(
+						ClienteIg.this, 
+						"Deseja excluir o cliente selecionado?", 
+						getTitle(), 
+						JOptionPane.YES_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				
+				//Sendo sim, converte a linha model e realiza a exclusão.
+				if (resposta == JOptionPane.YES_OPTION) {
+					
+					int linhaModelo = table.convertRowIndexToModel(linhaSelecionada);
+					modeloTabela.removeRow(linhaModelo);
+
+					JOptionPane.showMessageDialog(
+							ClienteIg.this, 
+							"Cliente excluído com sucesso", 
+							getTitle(), 
+							JOptionPane.INFORMATION_MESSAGE);
+					
+					atualizaStatus("Cliente excluído com sucesso");
+				}
+				
+			}
+		});
+
+		//Atenção ao método especifíco.
+		table.setComponentPopupMenu(jPopupVisualizarCliente);
+		
 		//O painel de antes erá só um intermediário.
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
@@ -211,10 +364,9 @@ public class ClienteIg extends JFrame {
 		panelBotoes.add(btnCliente);
 		
 		btnVisualizar = new JButton("Visualizar");
-		
 		btnVisualizar.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		panelBotoes.add(btnVisualizar);
-		
+
 		btnExcluir = new JButton("Excluir");
 		btnExcluir.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		panelBotoes.add(btnExcluir);
@@ -237,8 +389,6 @@ public class ClienteIg extends JFrame {
 		
 		});
 		
-		//Ação de visualizar.
-		
 		/*
 		 * Ideia pensada é a seguinte:
 		 * 
@@ -248,6 +398,7 @@ public class ClienteIg extends JFrame {
 		 * 
 		 */
 		
+		//Ação de visualizar.
 		btnVisualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -334,6 +485,10 @@ public class ClienteIg extends JFrame {
 			}
 		});
 		
+		//Aqui para garantir que table esteja instanciada.
+		//Além do true no botão médio, realiza o click para deixar a fonte padrão.
+		radioItemMedio.doClick();
+		
 	}//Fim do construtor da janela principal.
 	
 	/**
@@ -381,7 +536,5 @@ public class ClienteIg extends JFrame {
 	public void atualizaStatus(String status) {
 		lblBarraStatus.setText(status);
 	}
-	
-	
 
 }//class CadastroClienteIg.

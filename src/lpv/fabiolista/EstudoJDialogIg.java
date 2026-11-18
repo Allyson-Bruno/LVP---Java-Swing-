@@ -1,7 +1,9 @@
 package lpv.fabiolista;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -11,13 +13,20 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.DefaultEditor;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class EstudoJDialogIg extends JFrame {
 
@@ -68,6 +77,21 @@ public class EstudoJDialogIg extends JFrame {
 		
 		JMenuItem MenuSairItem = new JMenuItem("Sair");
 		menuArquivo.add(MenuSairItem);
+		
+		JMenu menuControle = new JMenu("Componentes");
+		menuBar.add(menuControle);
+		
+		JMenuItem itemComponenteControle = new JMenuItem("Janela de componentes");
+		
+		itemComponenteControle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			
+			}
+		});
+		
+		menuControle.add(itemComponenteControle);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -77,10 +101,60 @@ public class EstudoJDialogIg extends JFrame {
 		JPanel panelButton = new JPanel();
 		contentPane.add(panelButton, BorderLayout.SOUTH);
 		
+		JProgressBar progressBar = new JProgressBar(0, 100);
+		
+		progressBar.setIndeterminate(false);
+		
+		progressBar.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 12));
+		progressBar.setForeground(new Color(0, 250, 154));
+		progressBar.setStringPainted(true);
+		progressBar.setValue(50);
+		panelButton.add(progressBar);
+		
 		JButton btnJanela = new JButton("Abrir Janela");
 		
 		panelButton.add(btnJanela);
+	
+		//Parte 3: Componentes de controle.
+		//Repare nos argumentos passados: 
+		//Apresenta valores entre 0 e 100 e inicia com o valor 50.
 		
+		JSlider slider = new JSlider(0, 100, 50);
+		
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				System.out.println(slider.getValue());
+			}
+		});
+		
+		slider.setPaintLabels(true);
+		slider.setMajorTickSpacing(25);
+		slider.setMinorTickSpacing(5);
+		slider.setPaintTicks(true);
+		slider.setForeground(Color.BLACK);
+		contentPane.add(slider, BorderLayout.NORTH);
+
+		//JSpinner.
+		//Todos os componentes de controle tem um grande uso via interface gráfica.
+		JSpinner spinner = new JSpinner();
+		spinner.setModel(new SpinnerNumberModel(5, 0, 100, 1));
+
+		//Assim como o JSlider, o JSpinner utiliza eventos de alteração.
+		spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int numeroAtual =  (int) spinner.getValue();
+				if (numeroAtual == 10) {
+					System.out.println("Você chegou no número dez");
+				}
+			}
+		});
+		
+		
+		//Bloquando o campo de texto.
+		JSpinner.DefaultEditor editor = (DefaultEditor) spinner.getEditor();
+		editor.getTextField().setEditable(false);
+		
+		panelButton.add(spinner);
 		
 		/**
 		 * Clicado neste botão será criado um JDialog.
@@ -94,9 +168,6 @@ public class EstudoJDialogIg extends JFrame {
 		btnJanela.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//O segundo argumento se refere ao comportamento modal.
-				//O terceiro ao título
-
 				//Sendo true, ou seja, modal o usuário NÃO pode interagir com a janela principal.
 				JDialog jDialog = new JDialog(EstudoJDialogIg.this, "Janela modal", true);
 				

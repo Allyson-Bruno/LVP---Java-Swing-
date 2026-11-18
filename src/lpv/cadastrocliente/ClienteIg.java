@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,6 +23,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -115,12 +117,20 @@ public class ClienteIg extends JFrame {
 		//Atalho adicionado.
 		itemMenuNovoCliente.setMnemonic(KeyEvent.VK_N);
 		
+		//Permitindo que seja acessada usando ctrl + N.
+		itemMenuNovoCliente.setAccelerator
+			(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		
 		menuArquivo.add(itemMenuNovoCliente);
 		
 		itemMenuSair = new JMenuItem("Sair");
 		
 		//Segundo atalho.
 		itemMenuSair.setMnemonic(KeyEvent.VK_S);
+		
+		itemMenuSair.setAccelerator
+			(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		
 		menuArquivo.add(itemMenuSair);
 		
 		menuExibir = new JMenu("Exibir");
@@ -295,9 +305,8 @@ public class ClienteIg extends JFrame {
 				
 				formVisualizarCliente.configurarVisualizacao(ClienteIg.this);
 				
-				atualizaStatus("Cliente selecionado: " + nome);
-				
 				formVisualizarCliente.setVisible(true);
+				atualizaStatus("Cliente selecionado: " + nome);
 			}
 		});
 		
